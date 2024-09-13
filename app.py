@@ -3,12 +3,15 @@ import streamlit as st
 import boto3
 import os
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import font_manager, rc
 from io import StringIO
 from datetime import datetime
 from dotenv import load_dotenv
 
-rc('font',family='AppleGothic')
+font_path = os.path.join(os.path.dirname(__file__), 'NanumGothic.ttf')
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
+
 plt.rcParams['axes.unicode_minus']=False
 
 load_dotenv()

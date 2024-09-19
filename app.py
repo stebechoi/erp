@@ -10,8 +10,10 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 
-rc('font',family='AppleGothic')
-
+font_path = os.path.join(os.path.dirname(__file__), 'NanumGothic.ttf')
+font_manager.fontManager.addfont(font_path)
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
 
 plt.rcParams['axes.unicode_minus']=False
 

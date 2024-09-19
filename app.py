@@ -3,14 +3,15 @@ import streamlit as st
 import boto3
 import os
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib import font_manager, rc
 from io import StringIO
 from datetime import datetime
 from dotenv import load_dotenv
 
-font_path = os.path.join(os.path.dirname(__file__), 'NanumGothic.ttf')
-font = font_manager.FontProperties(fname=font_path).get_name()
-rc('font', family=font)
+
+rc('font',family='AppleGothic')
+
 
 plt.rcParams['axes.unicode_minus']=False
 
@@ -106,6 +107,12 @@ if not filtered_data_range.empty:
         marker='o',
         label='매출수량'
     )
+
+       # 선택한 날짜에 해당하는 x축 값 계산
+    selected_date_str = f'{week_number}-{weekday_number}'
+
+    # 선택한 날짜에 수직선 표시
+    plt.axvline(x=selected_date_str, color='red', linestyle='--', label='선택한 날짜')
     
     plt.title(f"전후 5일 간의 매출수량 (선택한 날짜: {selected_date})")
     plt.xlabel("주차-요일")

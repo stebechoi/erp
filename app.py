@@ -70,7 +70,10 @@ filtered_data = df[(df['week'] == week_number) & (df['weekday'] == weekday_numbe
 if not filtered_data.empty:
 
     avg_sales = filtered_data['평균매출수량'].values[0]
-    st.write(f"선택한 {week_number}주차, {weekday_korean}요일의 평균 매출수량은 {avg_sales}입니다.")
+    st.markdown(f"""
+    선택한 {week_number}주차, {weekday_korean}요일의 평균 매출수량은 
+    <span style='font-size:25px; font-weight:bold; '>{avg_sales}</span>입니다.
+    """, unsafe_allow_html=True)
 else:
     st.write("선택한 날짜에 대한 데이터가 없습니다.")
 
@@ -101,14 +104,12 @@ filtered_data_range = df[(df[['week', 'weekday']].apply(tuple, axis=1).isin(surr
 if not filtered_data_range.empty:
     st.write(f"선택한 날짜 기준 전후 5일간의 데이터를 그래프로 표시합니다.")
     
-    # 그래프 그리기
+    # 주차와 요일을 문자열로 변환하여 새로운 컬럼 추가
+    filtered_data_range['주차-요일'] = filtered_data_range['week'].astype(str) + '-' + filtered_data_range['weekday'].astype(str)
+
+    # Seaborn을 이용한 그래프 그리기
     plt.figure(figsize=(10, 6))
-    plt.plot(
-        filtered_data_range['week'].astype(str) + '-' + filtered_data_range['weekday'].astype(str),
-        filtered_data_range['평균매출수량'],
-        marker='o',
-        label='매출수량'
-    )
+    sns.lineplot(data=filtered_data_range, x='주차-요일', y='평균매출수량', marker='o', label='매출수량')
 
        # 선택한 날짜에 해당하는 x축 값 계산
     selected_date_str = f'{week_number}-{weekday_number}'

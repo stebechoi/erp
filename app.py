@@ -25,16 +25,16 @@ s3 = boto3.client('s3', aws_access_key_id=aws_access_key, aws_secret_access_key=
 # S3 버킷에서 파일 다운로드
 bucket_name = 'chodang'
 file_keys = {
-    '550':'erp/550.csv',
-    '콩국물':'erp/soup.csv'
+    '550':('erp/550.csv', 'erp/df2023.csv'),
+    '콩국물':('erp/soup.csv','erp/soup2023.csv')
 }
 
 selected_file = st.selectbox('제품을 선택하세요', list(file_keys.keys()))
 
-file_key = file_keys[selected_file]
+file_key_primary, file_key_secondary = file_keys[selected_file]
 
 # S3에서 파일을 읽어 데이터프레임으로 변환
-response = s3.get_object(Bucket=bucket_name, Key=file_key)
+response = s3.get_object(Bucket=bucket_name, Key=file_key_primary)
 status = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
 
 if status == 200:
@@ -42,6 +42,15 @@ if status == 200:
     df = pd.read_csv(StringIO(data))
 else:
     st.write(f"Error fetching file. HTTP status code: {status}")
+
+response_2 = s3.get_object(Bucket=bucket_name,Key=file_key_secondary)
+status_2 = response_2.get("ResponseMetadata", {}).get("HTTPStatusCode")
+
+if status_2 == 200:
+    data_2 = response_2['Body'].read().decode('utf-8')
+    df_2 = pd.read_csv(StringIO(data_2))
+else:
+    st.write(f"Error fetching file. HTTP status code: {status_2}")
 
 weekdays = ['월', '화', '수', '목', '금', '토', '일']
 
@@ -99,6 +108,7 @@ def get_surrounding_weeks_and_days(week, weekday, days=5):
 surrounding_dates = get_surrounding_weeks_and_days(week_number, weekday_number)
 
 filtered_data_range = df[(df[['week', 'weekday']].apply(tuple, axis=1).isin(surrounding_dates))]
+filtered_data_range_2 = df_2[(df_2[['week','weekday']].apply(tuple, axis=1).isin(surrounding_dates))]
 
 # 전후 5일간의 매출수량 그래프 그리기
 if not filtered_data_range.empty:
@@ -106,10 +116,15 @@ if not filtered_data_range.empty:
     
     # 주차와 요일을 문자열로 변환하여 새로운 컬럼 추가
     filtered_data_range['주차-요일'] = filtered_data_range['week'].astype(str) + '-' + filtered_data_range['weekday'].astype(str)
+    filtered_data_range_2['주차-요일'] = filtered_data_range_2['week'].astype(str) + '-' + filtered_data_range_2['weekday'].astype(str)
 
     # Seaborn을 이용한 그래프 그리기
     plt.figure(figsize=(10, 6))
-    sns.lineplot(data=filtered_data_range, x='주차-요일', y='평균매출수량', marker='o', label='매출수량')
+    sns.lineplot(data=filtered_data_range, x='주차-요일', y='평균매출수량', marker='o', label='평균매출수량')
+
+    st.write(f'2023년과 평균 매출 수량입니다.')
+    
+    sns.lineplot(data=filtered_data_range_2, x='주차-요일', y='매출수량', marker='o', label='2023매출수량')
 
        # 선택한 날짜에 해당하는 x축 값 계산
     selected_date_str = f'{week_number}-{weekday_number}'

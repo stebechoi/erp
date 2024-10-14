@@ -122,7 +122,7 @@ if not filtered_data_range.empty:
     plt.figure(figsize=(10, 6))
     sns.lineplot(data=filtered_data_range, x='주차-요일', y='평균매출수량', marker='o', label='평균매출수량')
 
-    st.write(f'2023년과 평균 매출 수량입니다.')
+    st.write(f'2023년과 3년 평균 매출 수량입니다.')
     
     sns.lineplot(data=filtered_data_range_2, x='주차-요일', y='매출수량', marker='o', label='2023매출수량')
 

@@ -141,3 +141,4 @@ if not filtered_data_range.empty:
     st.pyplot(plt)
 else:
     st.write("선택한 날짜 전후 7일 간의 데이터가 없습니다.")
+    

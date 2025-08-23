@@ -22,7 +22,7 @@ aws_access_key = os.getenv('AWS_ACCESS_KEY')
 secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key, aws_secret_access_key=secret_access_key)
 
-# S3 버킷에서 파일 다운로드
+#  S3 버킷에서 파일 다운로드
 bucket_name = 'chodang'
 file_keys = {
     '550':('erp/550.csv', 'erp/df2023.csv'),
